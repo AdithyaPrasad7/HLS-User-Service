@@ -1,3 +1,22 @@
 spring:
   application:
     name: HLS-user-service
+
+  datasource:
+    url: "jdbc:postgresql://${DB_URL:localhost}:5432/HLS-Portal"
+    username: "${DB_USERNAME:hls-admin}"
+    password: "${DB_PASSWORD:passwordpassword}"
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+  flyway:
+    validate-on-migrate: true
+    placeholderReplacement: true
+    placeholderPrefix: "#["
+    placeholderSuffix: "]"
+    outOfOrder: true

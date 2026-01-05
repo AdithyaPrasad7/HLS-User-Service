@@ -1,56 +1,51 @@
 package com.HLS_user_service.config
 
+import com.HLS_user_service.entity.User
+import com.HLS_user_service.util.notNull
+import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jwts
+import io.jsonwebtoken.SignatureAlgorithm
 import io.jsonwebtoken.security.Keys
 import org.springframework.stereotype.Component
 import java.util.Date
 import java.security.Key
+import java.util.UUID
 
 @Component
 class JwtTokenUtil {
-    private val secret = "NPAw9z$&F)J@NcRfUjXn2r5u8x/A%D*G-KaPdSgVkYp3s6v9y$&E(H+MbQeTAhWmZq\n"
+    private val secret = "NPAw9z$&F)J@NcRfUjXn2r5u8x/A%D*G-KaPdSgVkYp3s6v9y$&E(H+MbQeTAhWmZqN"
     private val expiration = 60000000 // milliseconds
+    private val secretKey: Key = Keys.hmacShaKeyFor(secret.toByteArray(Charsets.UTF_8))
 
-    fun generateToken(email: String): String {
-        val secretKey = Keys.hmacShaKeyFor(secret.toByteArray())
-        // Create JWT token
+    fun generateToken(user: User): String {
         return Jwts.builder()
-            .setSubject(email)
+            .setSubject(user.id.notNull().toString())
+            .claim("email", user.email)
+            .claim("firstName", user.firstName)
+            .claim("lastName", user.lastName)
+            .claim("phone", user.phone)
+            .claim("roles", "USER")
             .setExpiration(Date(System.currentTimeMillis() + expiration))
-            .signWith(secretKey).compact()
+            .setId(UUID.randomUUID().toString())
+            .signWith(secretKey, SignatureAlgorithm.HS256)
+            .compact()
     }
 
-    fun getEmail(jwt: String): String {
+    fun isTokenValid(token: String?): Boolean =
         try {
-            val jwtBody = getBodyFromToken(jwt)
-            return jwtBody
+            token != null && !isExpired(token)
         } catch (e: Exception) {
-            return "401 Unauthorized"
+            false
         }
-    }
 
-    fun isTokenValid(jwt: String?): Boolean {
-        try {
-            if (jwt == null) {
-                return false
-            }
-            getBodyFromToken(jwt)
-            return true;
-        } catch (e: Exception) {
-            return false
-        }
-    }
+    private fun isExpired(token: String): Boolean =
+        getClaims(token).expiration.before(Date())
 
-    private fun getSignInKey(): Key? {
-        return Keys.hmacShaKeyFor(secret.toByteArray())
-    }
-
-    private fun getBodyFromToken(token: String): String {
-        val body = Jwts.parserBuilder()
-            .setSigningKey(getSignInKey())
+    fun getClaims(token: String): Claims {
+        return Jwts.parserBuilder()
+            .setSigningKey(secretKey)
             .build()
             .parseClaimsJws(token)
             .body
-        return body.toString()
     }
 }
