@@ -5,46 +5,52 @@ import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
-import org.springframework.security.core.userdetails.UserDetails
-import org.springframework.security.core.userdetails.UserDetailsService
-import org.springframework.security.web.authentication.WebAuthenticationDetailsSource
 import org.springframework.stereotype.Component
 import org.springframework.web.filter.OncePerRequestFilter
 
 @Component
 class JwtAuthenticationFilter(
-    private var jwtTokenUtil: JwtTokenUtil,
-    private var userDetailService: UserDetailsService,
+    private val jwtTokenUtil: JwtTokenUtil,
 ) : OncePerRequestFilter() {
+
     override fun doFilterInternal(
-        request: HttpServletRequest, response: HttpServletResponse, filterChain: FilterChain
+        request: HttpServletRequest,
+        response: HttpServletResponse,
+        filterChain: FilterChain
     ) {
         val authHeader = request.getHeader("Authorization")
+
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response)
             return
         }
 
         val jwtToken = authHeader.substring(7)
+
         try {
-            val userEmail = jwtTokenUtil.getEmail(jwtToken)
+            if (!jwtTokenUtil.isTokenValid(jwtToken)) {
+                filterChain.doFilter(request, response)
+                return
+            }
 
             if (SecurityContextHolder.getContext().authentication == null) {
-                val userDetails: UserDetails = this.userDetailService.loadUserByUsername(userEmail)
-                if (jwtTokenUtil.isTokenValid(jwtToken)) {
-                    var authToken: UsernamePasswordAuthenticationToken = UsernamePasswordAuthenticationToken(
-                        userDetails,
-                        null,
-                        userDetails.authorities
-                    )
-                    authToken.details = WebAuthenticationDetailsSource().buildDetails(request)
-                    SecurityContextHolder.getContext().authentication = authToken
-                }
+                val claims = jwtTokenUtil.getClaims(jwtToken)
+
+                val authentication = UsernamePasswordAuthenticationToken(
+                    claims.subject,
+                    null,
+                    emptyList()
+                )
+
+                authentication.details = claims
+
+                SecurityContextHolder.getContext().authentication = authentication
             }
-        } catch (e: Exception) {
-            return response.sendError(403)
-        } finally {
+
             filterChain.doFilter(request, response)
+
+        } catch (ex: Exception) {
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid JWT")
         }
     }
 }
