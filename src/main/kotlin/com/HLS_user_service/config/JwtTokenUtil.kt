@@ -17,7 +17,7 @@ class JwtTokenUtil {
     private val expiration = 60000000 // milliseconds
     private val secretKey: Key = Keys.hmacShaKeyFor(secret.toByteArray(Charsets.UTF_8))
 
-    fun generateToken(user: User): String {
+    fun generateToken(user: User, isSuperUser: Boolean = false): String {
         return Jwts.builder()
             .setSubject(user.id.notNull().toString())
             .claim("email", user.email)
@@ -25,6 +25,7 @@ class JwtTokenUtil {
             .claim("lastName", user.lastName)
             .claim("phone", user.phone)
             .claim("roles", "USER")
+            .claim("isSuperUser", isSuperUser)
             .setExpiration(Date(System.currentTimeMillis() + expiration))
             .setId(UUID.randomUUID().toString())
             .signWith(secretKey, SignatureAlgorithm.HS256)

@@ -6,6 +6,7 @@ import com.HLS_user_service.entity.User
 import com.HLS_user_service.repository.UserRepository
 import com.HLS_user_service.util.notNull
 import org.springframework.stereotype.Service
+import com.HLS_user_service.util.BadRequest
 
 @Service
 class UserService(
@@ -38,5 +39,5 @@ class UserService(
         return user == null
     }
 
-    fun getUser(email: String) = userRepository.findByEmail(email) ?: throw Exception("User $email does not exists")
+    fun getUser(email: String) = userRepository.findByEmail(email) ?: throw BadRequest("User $email does not exists")
 }
