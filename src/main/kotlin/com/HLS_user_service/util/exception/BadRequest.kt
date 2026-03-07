@@ -1,4 +1,4 @@
-package com.HLS_user_service.util
+package com.HLS_user_service.util.exception
 
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.ResponseStatus
