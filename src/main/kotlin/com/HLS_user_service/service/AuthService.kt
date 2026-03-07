@@ -4,7 +4,7 @@ import com.HLS_user_service.config.JwtTokenUtil
 import com.HLS_user_service.dto.request.RegisterUserRequest
 import com.HLS_user_service.dto.request.LoginRequest
 import com.HLS_user_service.entity.User
-import com.HLS_user_service.util.BadRequest
+import com.HLS_user_service.util.exception.BadRequest
 import com.HLS_user_service.util.notNull
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service

@@ -9,6 +9,8 @@ open class Response {
     var success: Boolean = false
     var statusMessage: String? = null
     var contentType = "application/json; charset=utf-8"
+    var httpStatusCode: Int = 200
+    var meta: MetaType? = null
 
     constructor()
 
@@ -43,6 +45,16 @@ open class Response {
 
     fun fail(): Response {
         return success(false)
+    }
+
+    fun httpStatusCode(httpStatusCode: Int): Response {
+        this.httpStatusCode = httpStatusCode
+        return this
+    }
+
+    fun meta(metaType: MetaType): Response {
+        this.meta = metaType
+        return this
     }
 }
 

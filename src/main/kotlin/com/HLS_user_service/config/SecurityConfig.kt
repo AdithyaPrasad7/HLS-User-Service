@@ -25,6 +25,7 @@ class SecurityConfig() {
             .authorizeHttpRequests {
                 it
                     .requestMatchers("/api/auth/**").permitAll()
+                    .requestMatchers("/validate-token").permitAll()
                     .anyRequest().authenticated()
             }
             .sessionManagement {
