@@ -40,6 +40,11 @@ dependencies {
 	testImplementation("org.springframework.boot:spring-boot-starter-flyway-test")
 	implementation("commons-codec:commons-codec:1.9")
 	implementation("org.apache.commons:commons-lang3:3.20.0")
+//	implementation("com.vladmihalcea:hibernate-types-60:2.21.1")
+
+	implementation(platform("software.amazon.awssdk:bom:2.40.17"))
+	implementation("software.amazon.awssdk:s3")
+    implementation("software.amazon.awssdk:sts")
 }
 
 kotlin {
