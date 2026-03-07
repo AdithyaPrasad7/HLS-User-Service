@@ -1,7 +1,7 @@
 package com.HLS_user_service.service
 
+import com.HLS_user_service.dto.response.TokenDetailsResponse
 import com.HLS_user_service.entity.TokenDetails
-import com.HLS_user_service.entity.User
 import com.HLS_user_service.repository.TokenDetailsRepository
 import com.HLS_user_service.util.exception.BadRequest
 import com.HLS_user_service.util.addDays
@@ -21,8 +21,11 @@ class TokenDetailsService(
         tokenDetailsRepository.save(TokenDetails(user = userService.getUserById(userId), expiry = expirtDate))
     }
 
-    fun isTokenValid(token: String): Boolean {
+    fun isTokenValid(token: String): TokenDetailsResponse {
         val tokenDetails = getTokenDetails(token)
-        return tokenDetails != null && tokenDetails.isValid && tokenDetails.expiry.after(Date())
+
+        return TokenDetailsResponse(tokenDetails.isValid && tokenDetails.expiry.after(Date()),
+            tokenDetails.expiry, tokenDetails.user.firstName + " " + tokenDetails.user.lastName
+        )
     }
 }
