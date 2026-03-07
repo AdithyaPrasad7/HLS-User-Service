@@ -24,3 +24,7 @@ spring:
 masterPassword:
   hash: "LD6ZluoHW97M3mDYDyuIJQIOD8C8IB1c9aDEXYj3WuI="
   salt: "wr+jF4aB5ZDgQGhLoSbP1g=="
+
+aws:
+  s3:
+    bucket-name: my-upload-bucket
