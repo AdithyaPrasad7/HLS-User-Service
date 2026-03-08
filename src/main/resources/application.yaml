@@ -28,3 +28,4 @@ masterPassword:
 aws:
   s3:
     bucket-name: my-upload-bucket
+    role: ""

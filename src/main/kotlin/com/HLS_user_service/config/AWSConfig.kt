@@ -19,7 +19,7 @@ class AwsConfig {
         S3Presigner.builder().build()
 
     @Bean
-    fun stsClient(): StsClient =
-        StsClient.builder()
-            .build()
+    fun stsClient(): StsClient {
+        return StsClient.create()
+    }
 }
