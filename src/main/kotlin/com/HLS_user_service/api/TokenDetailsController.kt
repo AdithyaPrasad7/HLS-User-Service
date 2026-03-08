@@ -12,19 +12,12 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseBody
 
 @Controller
-@RequestMapping
+@RequestMapping("/api/token-details")
 @ResponseBody
 class TokenDetailsController(
     private val tokenDetailsService: TokenDetailsService
 ) {
-
-    @GetMapping("/validate-token")
-    fun isTokenValid(@RequestParam token: String): ResponseEntity<Response> {
-        val isValid = tokenDetailsService.isTokenValid(token)
-        return ResponseEntity(Response().data(isValid).success(), HttpStatus.OK)
-    }
-
-    @PostMapping("/api/token-details")
+    @PostMapping
     fun saveTokenDetails(
         @RequestParam userId: Long,
         @RequestParam expireIn: Long

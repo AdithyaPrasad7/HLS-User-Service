@@ -28,4 +28,8 @@ class TokenDetailsService(
             tokenDetails.expiry, tokenDetails.user.firstName + " " + tokenDetails.user.lastName
         )
     }
+
+    fun isTokenValid(tokenDetails: TokenDetails): Boolean {
+        return tokenDetails.isValid && tokenDetails.expiry.after(Date())
+    }
 }
